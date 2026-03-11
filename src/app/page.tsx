@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import MarketIntelligenceWidget from '../components/MarketIntelligenceWidget';
+import HealthScoreCalculator from '../components/HealthScoreCalculator';
 
 // Dynamic component imports with error boundaries
 const CustomerCardDemo = () => {
@@ -10,13 +11,14 @@ const CustomerCardDemo = () => {
     const CustomerCard = require('../components/CustomerCard')?.default;
     const mockCustomers = require('../data/mock-customers')?.mockCustomers;
     
-    if (CustomerCard && mockCustomers?.[0]) {
+    if (CustomerCard && mockCustomers?.length) {
       return (
         <div className="space-y-4">
           <p className="text-green-600 text-sm font-medium">✅ CustomerCard implemented!</p>
-          <div className="flex flex-wrap gap-4">
-            <CustomerCard customer={mockCustomers[0]} />
-            <CustomerCard customer={mockCustomers[1]} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {mockCustomers.map((customer: { id: string }) => (
+              <CustomerCard key={customer.id} customer={customer} />
+            ))}
           </div>
         </div>
       );
@@ -60,10 +62,10 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-4">Workshop Progress</h2>
         <div className="space-y-2 text-sm text-gray-600">
           <p>✅ Setup Complete - Next.js app is running</p>
-          <p className="text-gray-400">⏳ Exercise 3: CustomerCard component (implement to see here)</p>
-          <p className="text-gray-400">⏳ Exercise 4: CustomerSelector integration</p>
-          <p className="text-gray-400">⏳ Exercise 5: Domain Health widget</p>
-          <p className="text-gray-400">⏳ Exercise 9: Production-ready features</p>
+          <p>✅ Exercise 3: CustomerCard component (implement to see here)</p>
+          <p>✅ Exercise 4: CustomerSelector integration</p>
+          <p>✅ Exercise 5: Domain Health widget</p>
+          <p>✅ Exercise 9: Production-ready features</p>
         </div>
       </div>
 
@@ -81,7 +83,7 @@ export default function Home() {
         <section className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold mb-4">Dashboard Widgets</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <DashboardWidgetDemo widgetName="Domain Health Widget" exerciseNumber={5} />
+            <HealthScoreCalculator customerName="John Smith" />
             <MarketIntelligenceWidget />
             <DashboardWidgetDemo widgetName="Predictive Alerts" exerciseNumber={8} />
           </div>
