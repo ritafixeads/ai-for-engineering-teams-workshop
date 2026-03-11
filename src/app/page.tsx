@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
+import MarketIntelligenceWidget from '../components/MarketIntelligenceWidget';
 
 // Dynamic component imports with error boundaries
 const CustomerCardDemo = () => {
@@ -81,7 +82,7 @@ export default function Home() {
           <h3 className="text-lg font-semibold mb-4">Dashboard Widgets</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <DashboardWidgetDemo widgetName="Domain Health Widget" exerciseNumber={5} />
-            <DashboardWidgetDemo widgetName="Market Intelligence" exerciseNumber={6} />
+            <MarketIntelligenceWidget />
             <DashboardWidgetDemo widgetName="Predictive Alerts" exerciseNumber={8} />
           </div>
         </section>
