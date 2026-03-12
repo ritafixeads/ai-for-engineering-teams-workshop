@@ -1,10 +1,14 @@
 'use client';
 
+import { memo } from 'react';
 import { Customer } from '../data/mock-customers';
 
 export interface CustomerCardProps {
   customer: Customer;
-  onClick?: (customer: Customer) => void;
+  /** Whether this card is currently selected; controls ring + background styles. */
+  isSelected?: boolean;
+  /** Called with the customer when the card is clicked or activated via keyboard. */
+  onSelect?: (customer: Customer) => void;
 }
 
 interface HealthBadge {
@@ -43,39 +47,51 @@ function clampScore(score: number): number {
   return Math.max(0, Math.min(100, Math.round(score)));
 }
 
-export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
+/**
+ * CustomerCard is wrapped with React.memo so that it only re-renders when its
+ * own props change, preventing cascade re-renders from unrelated parent state.
+ */
+const CustomerCard = memo(function CustomerCard({ customer, isSelected = false, onSelect }: CustomerCardProps) {
   const score = clampScore(customer.healthScore);
   const { label, badgeClass, dotClass } = getHealthBadge(score);
   const domains = customer.domains ?? [];
-  const isClickable = typeof onClick === 'function';
+  const isInteractive = typeof onSelect === 'function';
 
   const handleClick = () => {
-    onClick?.(customer);
+    onSelect?.(customer);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isClickable && (e.key === 'Enter' || e.key === ' ')) {
+    if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault();
-      onClick?.(customer);
+      onSelect?.(customer);
     }
   };
 
   return (
     <div
-      role={isClickable ? 'button' : undefined}
-      tabIndex={isClickable ? 0 : undefined}
+      role={isInteractive ? 'button' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      aria-pressed={isInteractive ? isSelected : undefined}
       aria-label={
-        isClickable
-          ? `View details for ${customer.name} at ${customer.company}`
+        isInteractive
+          ? `Select ${customer.name} at ${customer.company}`
           : undefined
       }
-      onClick={isClickable ? handleClick : undefined}
-      onKeyDown={isClickable ? handleKeyDown : undefined}
+      onClick={isInteractive ? handleClick : undefined}
+      onKeyDown={isInteractive ? handleKeyDown : undefined}
       className={[
-        'bg-white rounded-lg shadow p-4 w-full max-w-[400px] min-h-[120px]',
+        'rounded-lg shadow p-4 w-full max-w-[400px] min-h-[120px]',
         'flex flex-col gap-3',
-        isClickable
-          ? 'cursor-pointer hover:shadow-md hover:ring-2 hover:ring-blue-200 transition-shadow transition-[box-shadow] focus:outline-none focus:ring-2 focus:ring-blue-400'
+        'transition-shadow transition-colors duration-150',
+        isSelected
+          ? 'bg-blue-50 ring-2 ring-blue-500'
+          : 'bg-white',
+        isInteractive && !isSelected
+          ? 'cursor-pointer hover:shadow-md hover:ring-1 hover:ring-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400'
+          : '',
+        isInteractive && isSelected
+          ? 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500'
           : '',
       ]
         .filter(Boolean)
@@ -138,4 +154,6 @@ export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
       )}
     </div>
   );
-}
+});
+
+export default CustomerCard;

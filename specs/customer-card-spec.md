@@ -1,6 +1,7 @@
 # Spec: CustomerCard Component
 
 ## Feature: CustomerCard
+Individual customer display card for the Customer Intelligence Dashboard.
 
 ### Context
 - Individual customer display card for the Customer Intelligence Dashboard
